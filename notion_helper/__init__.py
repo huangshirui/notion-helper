@@ -352,35 +352,9 @@ def list_page_blocks(client, page_id, exclude_synced_block=True, page_size=100):
                 yield child_block
         yield block
 
-def list_top_level_pages():
-    url = "https://api.notion.com/v1/search"
-    headers = {
-        "Authorization": f"Bearer {NOTION_TOKEN}",
-        "Notion-Version": "2022-06-28",
-        "Content-Type": "application/json"
-    }
-    payload = {
-        "filter": {
-            "value": "page",
-            "property": "object"
-        }
-    }
-    response = requests.post(url, headers=headers, json=payload)
-    results = response.json().get("results", [])
-    
-    top_pages = []
-    for item in results:
-        parent = item.get("parent")
-        if parent and parent.get("type") == "workspace":
-            top_pages.append(item["id"])
-    
-    return top_pages
-
-def duplicate_database(source_db_id, source_secret, target_secret, parent_page_id=None):
-    source_client = Client(auth=source_secret)
+def duplicate_database(source_db_id, source_client, target_client, parent_page_id=None):
     db_def = source_client.databases.retrieve(source_db_id)
 
-    target_client = Client(auth=target_secret)
     db_def['parent']['page_id'] = parent_page_id
     response = target_client.databases.create(
         **db_def
