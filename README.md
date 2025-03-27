@@ -64,7 +64,7 @@ tasks = Task.objects.filter({'status': {'equals': 'In Progress'}}).query()
 
 ## Installation
 ```bash
-pip install notion-client
+pip install git+https://github.com/huangshirui/notion-helper.git
 ```
 
 ## Contributing
